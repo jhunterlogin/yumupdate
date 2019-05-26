@@ -1,0 +1,12 @@
+---
+- name: Patch Servers
+  remote_user: ansible
+  hosts: all
+  become: true
+  ignore_errors: yes
+
+  tasks:
+  - name: Upgrade all yum packages ansible.
+    yum:
+      name: "*"
+      state: latest
