@@ -4,21 +4,18 @@
  tasks:
 
  - name: upgrade all packages
-   become: yes
-   become_user: root
-   yum: name='*' state=latest
+ yum: name='*' state=latest
  - name: check for reboot hint
-   shell: if [ $(rpm -q --last kernel | awk 'NR==1 {print $1}') != kernel-$(uname -r) ]; then echo 'reboot'; else echo 'Kernel is current'; fi
-   ignore_errors: true
-   register: reboot_hint
+ shell: if [ $(rpm -q --last kernel | awk 'NR==1 {print $1}') != kernel-$(uname -r) ]; then echo 'reboot'; else echo 'Kernel is current'; fi
+ ignore_errors: true
+ register: reboot_hint
  - name: Rebooting ...
-   command: shutdown -r now "Reboot required for updated kernel"
-   async: 0
-   poll: 0
-   ignore_errors: true
-   changed_when: "reboot_hint.stdout == 'reboot'"
-   register: rebooting
+ command: shutdown -r now "Reboot required for updated kernel"
+ async: 0
+ poll: 0
+ ignore_errors: true
+ changed_when: "reboot_hint.stdout == 'reboot'"
+ register: rebooting
  - name: Wait for computer to reboot...
-   pause: seconds=60
-   when: rebooting|changed
-
+ pause: seconds=60
+ when: rebooting|changed
