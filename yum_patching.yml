@@ -1,29 +1,27 @@
 --- 
-- 
-  become: true
+- become: true
   hosts: all
   ignore_errors: true
   remote_user: ansible
   
   tasks: 
-    - 
-      name: "upgrade all packages"
-      yum: "name=* state=latest"
-    - 
-      ignore_errors: true
-      name: "Check for reboot hint."
-      register: reboot_hint
-      shell: "LAST_KERNEL=$(rpm -q --last kernel | awk 'NR==1{sub(/kernel-/,\"\"); print $1}'); CURRENT_KERNEL=$(uname -r); if [ $LAST_KERNEL != $CURRENT_KERNEL ]; then echo 'reboot'; else echo 'no'; fi"
-    - 
-      async: 0
-      command: "shutdown -r now \"Reboot required for updated kernel\""
-      ignore_errors: true
-      name: "Rebooting ..."
-      poll: 0
-      register: rebooting
-      sudo: true
-      when: "reboot_hint.stdout.find(\"reboot\") != -1"
-    - 
-      name: "Wait for thing to reboot..."
-      pause: seconds=45
-      when: rebooting|changed
+
+  - name: update the system
+    yum:
+     name: "*"
+     state: latest
+  - name: restart system to reboot to newest kernel
+    shell: "sleep 5 && reboot"
+    async: 1
+    poll: 0
+
+  - name: wait for 10 seconds
+    pause:
+      seconds: 10
+
+  - name: wait for the system to reboot
+    wait_for_connection:
+      connect_timeout: 20
+      sleep: 5
+      delay: 5
+      timeout: 60 
