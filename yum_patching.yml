@@ -10,18 +10,16 @@
     yum:
      name: "*"
      state: latest
-  - name: restart system to reboot to newest kernel
-    shell: "sleep 5 && reboot"
-    async: 1
+
+  - name: Reboot box if kernel/libs updated and requested by the system
+    shell: sleep 10 && /sbin/shutdown -r now 'Rebooting box to update system libs/kernel as needed' 
+    args:
+        removes: /var/run/reboot-required
+    async: 300
     poll: 0
+    ignore_errors: true
 
-  - name: wait for 10 seconds
-    pause:
-      seconds: 10
-
-  - name: wait for the system to reboot
+  - name: Wait for system to become reachable again
     wait_for_connection:
-      connect_timeout: 20
-      sleep: 5
-      delay: 5
-      timeout: 60 
+        delay: 60
+        timeout: 300
