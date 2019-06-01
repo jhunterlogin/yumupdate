@@ -4,7 +4,7 @@
   hosts: all
   ignore_errors: true
   remote_user: ansible
-  sudo: true
+  
   tasks: 
     - 
       name: "upgrade all packages"
