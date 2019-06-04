@@ -6,6 +6,9 @@
   
   tasks: 
 
+  - name: delete all yum cache prior to patching
+    command: rm -rf /var/cache/yum/*
+
   - name: update the system
     yum:
      name: "*"
