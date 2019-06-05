@@ -16,7 +16,7 @@
   - name: update the system
     yum:
      name: "*"
-     state: absent
+     state: latest
     become: yes
     ignore_errors: true
 
