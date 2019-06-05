@@ -19,27 +19,6 @@
      state: absent
     ignore_errors: true
 
-  --- 
-- become: true
-  hosts: all
-  ignore_errors: true
-  remote_user: ansible
-  
-  tasks: 
-
-  - name: delete all yum cache prior to patching
-    file:
-      path: /var/cache/yum
-      state: directory
-    become: yes
-    ignore_errors: true
-
-  - name: update the system
-    yum:
-     name: "*"
-     state: absent
-    ignore_errors: true
-
   - name: Restart server
     command: /sbin/reboot
     async: 0
