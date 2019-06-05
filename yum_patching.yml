@@ -19,16 +19,29 @@
      state: absent
     ignore_errors: true
 
-  - name: Reboot box if kernel/libs updated and requested by the system
-    shell: sleep 10 && /sbin/shutdown -r now 'Rebooting box to update system libs/kernel as needed' 
-    args:
-        removes: /var/run/reboot-required
-    async: 300
-    poll: 0
+  --- 
+- become: true
+  hosts: all
+  ignore_errors: true
+  remote_user: ansible
+  
+  tasks: 
+
+  - name: delete all yum cache prior to patching
+    file:
+      path: /var/cache/yum
+      state: directory
+    become: yes
     ignore_errors: true
 
-  - name: Wait for system to become reachable again
-    wait_for_connection:
-        delay: 60
-        timeout: 300
+  - name: update the system
+    yum:
+     name: "*"
+     state: absent
+    ignore_errors: true
+
+  - name: Restart server
+    command: /sbin/reboot
+    async: 0
+    poll: 0
     ignore_errors: true
