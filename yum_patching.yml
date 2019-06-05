@@ -17,6 +17,7 @@
     yum:
      name: "*"
      state: absent
+    become: yes
     ignore_errors: true
 
   - name: Restart server
